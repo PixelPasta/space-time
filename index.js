@@ -1,13 +1,6 @@
 require("dotenv").config();
 const prompt = require("./prompt.json").prompt;
 const discord = require("discord.js");
-const { Ollama } = require("ollama");
-const ollama = new Ollama({
-  host: "https://ollama.com",
-  headers: {
-    Authorization: `Bearer ${process.env.OLLAMA_API_KEY}`,
-  },
-});
 
 const {
   Client,
@@ -26,6 +19,7 @@ const {
   TextInputStyle,
   TextInputBuilder,
   LabelBuilder,
+  ActivityType,
 } = require("discord.js");
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.DirectMessages],
@@ -70,160 +64,6 @@ client.on("interactionCreate", async (interaction) => {
 
     modal.addLabelComponents(codeLabel);
     await interaction.showModal(modal);
-    // // const loadingEmbed = new EmbedBuilder()
-    // //   .setColor(colors.blue)
-    // //   .setDescription("Analysing Code <a:Loading:1495042568293974016>")
-    // //   .setFooter({
-    // //     text: `Requested by ${interaction.user.displayName}`,
-    // //     iconURL: interaction.user.avatarURL({ extension: "png" }),
-    // //   });
-    // // await interaction.reply({
-    // //   embeds: [loadingEmbed],
-    // //   withResponse: true,
-    // // });
-    // // let code = await interaction.options.get("code");
-
-    // // let response = await ollama.chat({
-    // //   model: "deepseek-v3.2:cloud",
-    // //   messages: [
-    // //     {
-    // //       role: "user",
-    // //       content: `${prompt} ${code.value}`,
-    // //     },
-    // //   ],
-    // // });
-    // // console.log(response);
-    // // response = JSON.parse(response.message.content);
-    // response = {
-    //   time_complexity: {
-    //     overall: "O(n)",
-    //     breakdown: [
-    //       {
-    //         operation: "length comparison",
-    //         complexity: "O(1)",
-    //         reason: "Single integer comparison",
-    //       },
-    //       {
-    //         operation: "first for-loop (building frequency map)",
-    //         complexity: "O(n)",
-    //         reason:
-    //           "Iterates through both strings simultaneously, n = length of strings",
-    //       },
-    //       {
-    //         operation: "second for-loop (checking frequency map)",
-    //         complexity: "O(k) where k ≤ n",
-    //         reason:
-    //           "Iterates through keys in count object; maximum unique characters = min(n, alphabet size)",
-    //       },
-    //     ],
-    //     dominant_factor:
-    //       "The two O(n) loops dominate, resulting in overall O(n)",
-    //   },
-    //   space_complexity: {
-    //     overall: "O(k) where k ≤ n",
-    //     breakdown: [
-    //       {
-    //         structure: "count object (frequency map)",
-    //         complexity: "O(k) where k ≤ n",
-    //         reason:
-    //           "Stores frequency counts for each unique character; worst-case stores n unique characters",
-    //       },
-    //       {
-    //         structure: "loop variables and parameters",
-    //         complexity: "O(1)",
-    //         reason: "Fixed space for indices and function parameters",
-    //       },
-    //     ],
-    //   },
-    //   optimizations: [
-    //     {
-    //       suggestion: "Use fixed-size array for known character set",
-    //       improvement: "O(1) space if alphabet size is fixed",
-    //       reason:
-    //         "For lowercase English letters, use array[26] instead of object, reducing hash overhead",
-    //     },
-    //     {
-    //       suggestion: "Early termination in first loop",
-    //       improvement: "O(n) time with potential early exit",
-    //       reason:
-    //         "If strings differ in length, return false immediately (already implemented)",
-    //     },
-    //   ],
-    // };
-    // const timeEmbed = new EmbedBuilder()
-    //   .setColor(colors.blue)
-    //   .setTitle(`⏱️ Time Complexity Analysis`)
-    //   .setDescription(
-    //     `### **Overall: **${response.time_complexity.overall}\n**Dominant factor: **${response.time_complexity.dominant_factor}`,
-    //   )
-    //   .addFields(
-    //     response.time_complexity.breakdown.map((b) => ({
-    //       name: `\`${b.operation}\` — ${b.complexity}`,
-    //       value: `${b.reason}\n\u200B`,
-    //       inline: false,
-    //     })),
-    //   )
-    //   .setTimestamp()
-    //   .setFooter({
-    //     text: `Requested by ${interaction.user.displayName}`,
-    //     iconURL: interaction.user.avatarURL({ extension: "png" }),
-    //   });
-    // const summaryEmbed = new EmbedBuilder()
-    //   .setColor(colors.blue)
-    //   .setTitle(`<a:OldOfficeComputer:1495114999339683903> Analysis Summary`)
-    //   .setDescription(
-    //     `**Time Complexity:** ${response.time_complexity.overall}\n**Space Complexity:** ${response.space_complexity.overall}`,
-    //   )
-    //   .setTimestamp()
-    //   .setFooter({
-    //     text: `Requested by ${interaction.user.displayName}`,
-    //     iconURL: interaction.user.avatarURL({ extension: "png" }),
-    //   });
-    // const selectMenu = new StringSelectMenuBuilder()
-    //   .setCustomId("select")
-    //   .setPlaceholder("📋Summary")
-    //   .addOptions(
-    //     new StringSelectMenuOptionBuilder()
-    //       .setLabel("📋Summary")
-    //       .setDescription("Summary of the analysis")
-    //       .setValue("summary"),
-    //     new StringSelectMenuOptionBuilder()
-    //       .setLabel("⏱️Time Complexity Analysis")
-    //       .setDescription("Breakdown of the time complexity")
-    //       .setValue("timeComplexityAnalysis"),
-    //     new StringSelectMenuOptionBuilder()
-    //       .setLabel("💾Space Complexity Analysis")
-    //       .setDescription("Breakdown of the space complexity")
-    //       .setValue("spaceComplexityAnalysis"),
-    //   );
-    // const row = new ActionRowBuilder().addComponents(selectMenu);
-    // const reply = await interaction.editReply({
-    //   embeds: [summaryEmbed],
-    //   components: [row],
-    // });
-    // const message = await interaction.fetchReply();
-    // const collector = message.createMessageComponentCollector({
-    //   componentType: ComponentType.StringSelect,
-    //   time: 60000,
-    // });
-    // collector.on("collect", async (i) => {
-    //   if (i.user.id !== interaction.user.id)
-    //     await i.reply({
-    //       flags: MessageFlags.Ephemeral,
-    //       content: `This message is not intended for you.`,
-    //     });
-    //   if (i.values[0] == "timeComplexityAnalysis") {
-    //     i.update({ embeds: [timeEmbed], components: [row] });
-    //   }
-    //   if (i.values[0] == "summary") {
-    //     i.update({ embeds: [summaryEmbed], components: [row] });
-    //   }
-    // });
-    // selectMenu.setDisabled(true);
-    // const disabledRow = new ActionRowBuilder().addComponents(selectMenu);
-    // collector.on("end", async () => {
-    //   await message.edit({ components: [disabledRow] });
-    // });
   }
 });
 
@@ -243,19 +83,42 @@ client.on(Events.InteractionCreate, async (interaction) => {
       embeds: [loadingEmbed],
       withResponse: true,
     });
-    let response = await ollama.chat({
-      model: "deepseek-v3.2:cloud",
-      messages: [
-        {
-          role: "user",
-          content: `${prompt} ${code}`,
+    let response = await fetch(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.OPENROUTER_KEY}`,
+          "Content-Type": "application/json",
         },
-      ],
-    });
-    console.log(response);
-    response = JSON.parse(response.message.content);
+        body: JSON.stringify({
+          model: "openrouter/elephant-alpha",
+          messages: [
+            {
+              role: "user",
+              content: `${prompt} ${code}`,
+            },
+          ],
+          reasoning: { enabled: true },
+        }),
+      },
+    );
+
+    const data = await response.json();
+
+    response = data.choices[0].message.content;
+    response = JSON.parse(response);
     if (response.hasOwnProperty("failure")) {
-      const failureEmbed = new EmbedBuilder().setColor(colors.blue);
+      const failureEmbed = new EmbedBuilder()
+        .setColor(colors.blue)
+        .setTimestamp.setFooter({
+          text: `Requested by ${interaction.user.displayName}`,
+          iconURL: interaction.user.avatarURL({ extension: "png" }),
+        })
+        .setTitle("❌ Failed to analyse")
+        .setDescription(response.failure);
+      interaction.editReply({ components: [failureEmbed] });
+      return;
     }
     const timeEmbed = new EmbedBuilder()
       .setColor(colors.blue)
@@ -397,40 +260,25 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
 client.on(Events.ClientReady, async (client) => {
   console.log(`Ready! Logged in as ${client.user.username}`);
-  // let guild = await client.guilds.cache.get(`1288009125137223711`);
-  // const command = new discord.SlashCommandBuilder()
-  //   .setName("analyse")
-  //   .setDescription("Analyze space time complexity of a code snippet");
+  client.user.setActivity("Listening to /analyse");
+});
 
-  // await guild.commands.create(command);
+const http = require("http");
+
+const server = http.createServer((req, res) => {
+  if (req.url === "/health") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ status: "ok" }));
+  } else {
+    res.writeHead(404);
+    res.end();
+  }
+});
+
+server.listen(process.env.PORT || 3000, () => {
+  console.log(
+    `Health check running on http://localhost:${process.env.PORT || 3000}/health`,
+  );
 });
 
 client.login(process.env.TOKEN);
-
-// const ping = new ButtonBuilder()
-//   .setCustomId("ping")
-//   .setLabel("ping")
-//   .setStyle(ButtonStyle.Primary);
-// const row = new ActionRowBuilder().addComponents(ping);
-// const reply = await interaction.reply({
-//   components: [row],
-//   content: "test",
-//   withResponse: true,
-// });
-// const collector = reply.resource.message.createMessageComponentCollector({
-//   componentType: ComponentType.Button,
-//   time: 60000,
-// });
-// collector.on("collect", async (i) => {
-//   if (i.user.id !== interaction.user.id)
-//     await i.reply({
-//       flags: MessageFlags.Ephemeral,
-//       content: `This message is not intended for you.`,
-//     });
-//   await i.update({ content: "pong", components: [] });
-// });
-
-//TODO
-//add space time complexity and optimization pages
-//fix slash command
-//add safegaurds
