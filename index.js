@@ -92,7 +92,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "openrouter/elephant-alpha",
+          model: "inclusionai/ling-2.6-flash:free",
           messages: [
             {
               role: "user",
@@ -105,7 +105,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
     );
 
     const data = await response.json();
-
+    console.log(data);
     response = data.choices[0].message.content;
     response = JSON.parse(response);
     if (response.hasOwnProperty("failure")) {
